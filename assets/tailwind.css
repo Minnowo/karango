@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+
+    *, ::after, ::before{
+        box-sizing: border-box
+    }
+
+    html {
+        color: theme('colors.c.gray') ;
+        background-color: theme('colors.c.d-black');
+    }
+
+    a {
+        color: theme('colors.c.orange');
+        background-color: transparent;
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: theme('colors.c.yellow');
+    }
+}
+
