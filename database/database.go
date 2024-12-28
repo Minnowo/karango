@@ -13,26 +13,20 @@ type DB interface {
 
 	// Migrate runs migrations for this database
 	Migrate(ctx context.Context) error
+
+	// Inserts a new food into the datbase
+	AddFood(food *Food) (int, error)
+	AddFoods(foods []Food) error
+
+	GetVersion() (int, error)
+	SetVersion(version int) error
+
+	HasFlag(flag DBFlag) (bool, error)
+	SetFlag(flag DBFlag, on bool) error
 }
 
 type dbbase struct {
 	*sqlx.DB
-}
-
-type DBType int
-
-const (
-	POSTGRES DBType = iota
-)
-
-func DBTypeFromStr(s string) DBType {
-
-	switch s {
-	case "postgres":
-		return POSTGRES
-	}
-
-	return POSTGRES
 }
 
 func Connect(ctx context.Context, db DBType, connection string) (DB, error) {

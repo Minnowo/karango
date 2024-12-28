@@ -44,6 +44,16 @@ func DBConnect() {
 	}
 
 	db.Migrate(context.Background())
+
+	err = database.CreateDefaultData(db)
+
+	if err != nil {
+		if err != database.ErrDefaultDataCreate {
+			log.Warn().Err(err).Msg("Could not create default data")
+		} else {
+			log.Info().Msg("Default data already exists")
+		}
+	}
 }
 
 func main() {
