@@ -18,3 +18,33 @@ type DB interface {
 type dbbase struct {
 	*sqlx.DB
 }
+
+type DBType int
+
+const (
+	POSTGRES DBType = iota
+)
+
+func DBTypeFromStr(s string) DBType {
+
+	switch s {
+	case "postgres":
+		return POSTGRES
+	}
+
+	return POSTGRES
+}
+
+func Connect(ctx context.Context, db DBType, connection string) (DB, error) {
+
+	switch db {
+
+	case POSTGRES:
+
+		con, err := OpenPGDatabase(ctx, connection)
+
+		return con, err
+	}
+
+	panic("Database type is not supported!")
+}

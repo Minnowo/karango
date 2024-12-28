@@ -3,7 +3,7 @@ package pages
 import "karango/components"
 
 
-templ Home() {
+templ Home(view *HomeView) {
 
     <head>
         @components.HeadMetaData()
@@ -12,4 +12,49 @@ templ Home() {
 
     <div> Hello world </div>
 
+    <table class="border-collapse border border-red-400">
+        <thead>
+            <tr>
+                <td>Day</td>
+                <td>Protein</td>
+                <td>Fat</td>
+                <td>Carbs</td>
+                <td>Fibre</td>
+                <td>Net Carbs</td>
+            </tr>
+    
+        </thead>
+
+        for _, d := range view.Days {
+
+            <tr>
+            <td> <input type="checkbox"/> </td>
+            <td> { d.Day } </td>
+            <td> { F32Str(d.Fat()) } </td>
+            <td> { F32Str(d.Protein()) } </td>
+            <td> { F32Str(d.Carbs()) } </td>
+            <td> { F32Str(d.Fibre()) } </td>
+            <td> { F32Str(d.Carbs()) } </td>
+            </tr>
+
+        }
+    </table> 
+
+
+    for _, d := range view.Days {
+            
+        @templ.JSONScript("id", d)
+
+    }
+
+    <form class="w-64">
+
+    <input class="w-full m-2" type="text" placeholder="">
+    <input class="w-full m-2" type="text" placeholder="">
+    <input class="w-full m-2" type="text" placeholder="">
+    <input class="w-full m-2" type="text" placeholder="">
+    <input class="w-full m-2" type="text" placeholder="">
+    <input class="w-full m-2" type="text" placeholder="">
+    
+    </form>
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"os"
 	"time"
 
 	"karango/assets"
@@ -11,53 +12,113 @@ import (
 	"karango/logging"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	"github.com/rs/zerolog/log"
 )
 
-func test() {
+const (
+	DBCON_ENV = "DATABASE_CONN"
+	DBVENDOR  = "DATABASE_VENDOR"
+)
 
-	// basic database test
-	db, err := database.OpenPGDatabase(context.Background(), "host=localhost port=5432 user=postgres password=postgres dbname=postgres sslmode=disable")
+func DBConnect() {
+
+	conn := os.Getenv(DBCON_ENV)
+	vendor := database.DBTypeFromStr(os.Getenv(DBVENDOR))
+
+	log.Info().
+		Int("vendor", int(vendor)).
+		Str("str", conn).
+		Msg("Got databse connection string from env")
+
+	db, err := database.Connect(
+		context.Background(),
+		vendor,
+		conn,
+	)
 
 	if err != nil {
-		log.Fatal().Err(err).Msg("Could not connect to database")
+
+		log.Error().Err(err).Msg("Cannot get database connection")
 		return
 	}
 
-    log.Info().Msg("Connected to the database")
-
-	err = db.Migrate(context.Background())
-
-	if err != nil {
-		log.Fatal().Err(err).Msg("Failed to migrate database")
-		return
-	}
-
-    log.Info().Msg("Migration successful")
-
-	// we are hard coding for postgres right now
-	tx := db.MustBegin()
-	tx.MustExec("INSERT INTO person (first_name, last_name, email) VALUES ($1, $2, $3)", "Jason", "Moiron", "jmoiron@jmoiron.net")
-	tx.MustExec("INSERT INTO person (first_name, last_name, email) VALUES ($1, $2, $3)", "John", "Doe", "johndoeDNE@gmail.net")
-	tx.MustExec("INSERT INTO place (country, city, telcode) VALUES ($1, $2, $3)", "United States", "New York", "1")
-	tx.MustExec("INSERT INTO place (country, telcode) VALUES ($1, $2)", "Hong Kong", "852")
-	tx.MustExec("INSERT INTO place (country, telcode) VALUES ($1, $2)", "Singapore", "65")
-	tx.Commit()
-
-    log.Info().Msg("Test data added successfully")
-
+	db.Migrate(context.Background())
 }
 
 func main() {
 
 	logging.InitFromEnv()
 
-	test()
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatal().Err(err).Msg("Error loading .env file")
+		return
+	}
+
+	DBConnect()
 
 	r := mux.NewRouter()
 
+	r.HandleFunc("/entry", func(w http.ResponseWriter, r *http.Request) {
+
+		pages.EntryPage(&pages.EntryView{
+			Time:             time.Now(),
+			BGL:              20,
+			ITCR:             1,
+			AIT:              1,
+			RIA:              1,
+			Portion:          23,
+			BGLIncrement:     0.1,
+			ITCRIncrement:    0.5,
+			AITIncrement:     0.5,
+			RIAIncrement:     0,
+			PortionIncrement: 1,
+		}).Render(r.Context(), w)
+	})
+
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		pages.Home().Render(r.Context(), w)
+
+		pages.Home(&pages.HomeView{
+			Days: []pages.Day{
+				pages.Day{
+					Day: "today",
+					Events: []pages.Event{
+						pages.Event{
+							Event:             "lunch",
+							Time:              time.Now(),
+							BG:                5.3,
+							ITCR:              5.0,
+							ActualTaken:       7.56,
+							RecommendedAmount: 7.43,
+							ISF:               3,
+							BGT:               6.5,
+							Foods: []pages.Food{
+								pages.Food{
+									Name:    "apple",
+									Unit:    "grams",
+									Portion: 1,
+									Carbs:   10,
+									Protein: 10,
+									Fat:     10,
+									Fibre:   1,
+								},
+								pages.Food{
+									Name:    "pear",
+									Unit:    "grams",
+									Portion: 1,
+									Carbs:   10,
+									Protein: 10,
+									Fat:     10,
+									Fibre:   1,
+								},
+							},
+						},
+					},
+				},
+			},
+		}).Render(r.Context(), w)
 	})
 
 	assets.Register(r)
@@ -74,7 +135,7 @@ func main() {
 
 	log.Info().Str("address", addr).Msg("Site is running")
 
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 
 	log.Fatal().Err(err).Msg("Site is dead")
 }

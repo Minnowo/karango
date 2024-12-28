@@ -1,0 +1,186 @@
+package pages
+
+import(
+"karango/components"
+) 
+
+
+templ EntryPage(view *EntryView) {
+
+    <head>
+        @components.HeadMetaData()
+        @components.IncludeMainCSS()
+
+   <script>
+        // Function to add a new row to the table
+        function addRow() {
+            var table = document.getElementById('food-table');
+            var newRow = table.insertRow();
+            
+            // Food (text input)
+            var cell1 = newRow.insertCell(0);
+            cell1.innerHTML = '<input type="text" name="food[]" class="p-2 w-full border border-gray-300 rounded-md">';
+
+            // Portion (numeric input)
+            var cell2 = newRow.insertCell(1);
+            cell2.innerHTML = '<input type="number" name="portion[]" class="p-2 w-full border border-gray-300 rounded-md" min="1">';
+
+            // Unit (dropdown)
+            var cell3 = newRow.insertCell(2);
+            cell3.innerHTML = `
+                <select name="unit[]" class="p-2 w-full border border-gray-300 rounded-md">
+                    <option value="g">grams</option>
+                    <option value="ml">milliliters</option>
+                    <option value="cup">cup</option>
+                    <option value="oz">ounce</option>
+                    <option value="tbsp">tablespoon</option>
+                    <option value="teaspoon">teaspoon</option>
+                </select>`;
+
+            // Protein (float input)
+            var cell4 = newRow.insertCell(3);
+            cell4.innerHTML = '<input type="number" name="protein[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
+
+            // Carb (float input)
+            var cell5 = newRow.insertCell(4);
+            cell5.innerHTML = '<input type="number" name="carb[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
+
+            // Fibre (float input)
+            var cell6 = newRow.insertCell(5);
+            cell6.innerHTML = '<input type="number" name="fibre[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
+
+            // Fat (float input)
+            var cell7 = newRow.insertCell(6);
+            cell7.innerHTML = '<input type="number" name="fat[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
+
+            // NetCarbs (float input)
+            var cell8 = newRow.insertCell(7);
+            cell8.innerHTML = '<input type="number" name="netcarbs[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
+        }
+    </script>
+
+    </head>
+
+    <body >
+
+  <div class="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-lg mt-10">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Blood Sugar and Insulin Tracker</h2>
+        
+        <form action="#" method="POST" class="space-y-6">
+            <!-- Date-Time Input -->
+            <div>
+                <label for="date-time" class="block text-sm font-semibold text-gray-700">Date and Time</label>
+                <input type="datetime-local" value={ view.Time.Format(HTML_TIME_FMT) } id="date-time" name="date-time" class="mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <!-- Blood Glucose Level -->
+            <div>
+                <label for="blood-glucose" class="block text-sm font-semibold text-gray-700">Blood Glucose Level (mg/dL)</label>
+                <input 
+                type="number" 
+                id="blood-glucose" 
+                name="blood-glucose" 
+                step={ FmtFloat(view.BGLIncrement) } 
+                value={ FmtFloat(view.BGL) } 
+                class="mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <!-- Insulin to Carb Ratio -->
+            <div>
+                <label for="insulin-carb-ratio" class="block text-sm font-semibold text-gray-700">Insulin to Carb Ratio</label>
+                <input  
+                type="number" 
+                id="insulin-carb-ratio" 
+                name="insulin-carb-ratio" 
+                step={ FmtFloat(view.ITCRIncrement) } 
+                value={ FmtFloat(view.ITCR) } 
+                class="mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <!-- Actual Taken Insulin -->
+            <div>
+                <label for="actual-insulin" class="block text-sm font-semibold text-gray-700">Actual Insulin Taken (units)</label>
+                <input 
+                type="number" 
+                id="actual-insulin" 
+                name="actual-insulin" 
+                step={ FmtFloat(view.AITIncrement) } 
+                value={ FmtFloat(view.AIT) } 
+                class="mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <!-- Recommended Insulin Amount -->
+            <div>
+                <label for="recommended-insulin" class="block text-sm font-semibold text-gray-700">Recommended Insulin Amount (units)</label>
+                <input 
+                type="number" 
+                id="recommended-insulin" 
+                name="recommended-insulin" 
+                step={ FmtFloat(view.RIAIncrement) } 
+                value={ FmtFloat(view.RIA) } 
+                class="mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <!-- Food Dropdown -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700">Food Information</label>
+                <table id="food-table" class="table-auto w-full mt-2">
+                    <thead>
+                        <tr>
+                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Food</th>
+                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Portion</th>
+                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Unit</th>
+                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Protein</th>
+                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Carb</th>
+                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Fibre</th>
+                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Fat</th>
+                            <th class="px-4 py-2 text-sm font-medium text-gray-700">NetCarbs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" name="food[]" class="p-2 w-full border border-gray-300 rounded-md"></td>
+                            <td><input type="number" name="portion[]" class="p-2 w-full border border-gray-300 rounded-md" min="1"></td>
+                            <td>
+                                <select name="unit[]" class="p-2 w-full border border-gray-300 rounded-md">
+                                    <option value="g">grams</option>
+                                    <option value="ml">milliliters</option>
+                                    <option value="cup">cup</option>
+                                    <option value="oz">ounce</option>
+                                    <option value="tbsp">tablespoon</option>
+                                    <option value="teaspoon">teaspoon</option>
+                                </select>
+                            </td>
+                            <td><input type="number" name="protein[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
+                            <td><input type="number" name="carb[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
+                            <td><input type="number" name="fibre[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
+                            <td><input type="number" name="fat[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
+                            <td><input type="number" name="netcarbs[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" onclick="addRow()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Add Row</button>
+            </div>
+
+            <!-- Portion Size -->
+            <div>
+                <label for="portion" class="block text-sm font-semibold text-gray-700">Portion Size (g)</label>
+                <input 
+                type="number" 
+                id="portion" 
+                name="portion" 
+                step={ FmtFloat(view.PortionIncrement) } 
+                value={ FmtFloat(view.Portion) } 
+                class="mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end">
+                <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    </body>
+
+}
