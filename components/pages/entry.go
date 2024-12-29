@@ -2,6 +2,7 @@ package pages
 
 import (
 	"fmt"
+	"karango/database"
 	"time"
 )
 
@@ -21,6 +22,7 @@ type EntryView struct {
 	AITIncrement     float32
 	RIAIncrement     float32
 	PortionIncrement float32
+	Foods            []database.Food
 }
 
 func FmtFloat(f float32) string {

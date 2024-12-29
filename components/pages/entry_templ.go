@@ -45,14 +45,18 @@ func EntryPage(view *EntryView) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\r\n        // Function to add a new row to the table\r\n        function addRow() {\r\n            var table = document.getElementById('food-table');\r\n            var newRow = table.insertRow();\r\n            \r\n            // Food (text input)\r\n            var cell1 = newRow.insertCell(0);\r\n            cell1.innerHTML = '<input type=\"text\" name=\"food[]\" class=\"p-2 w-full border border-gray-300 rounded-md\">';\r\n\r\n            // Portion (numeric input)\r\n            var cell2 = newRow.insertCell(1);\r\n            cell2.innerHTML = '<input type=\"number\" name=\"portion[]\" class=\"p-2 w-full border border-gray-300 rounded-md\" min=\"1\">';\r\n\r\n            // Unit (dropdown)\r\n            var cell3 = newRow.insertCell(2);\r\n            cell3.innerHTML = `\r\n                <select name=\"unit[]\" class=\"p-2 w-full border border-gray-300 rounded-md\">\r\n                    <option value=\"g\">grams</option>\r\n                    <option value=\"ml\">milliliters</option>\r\n                    <option value=\"cup\">cup</option>\r\n                    <option value=\"oz\">ounce</option>\r\n                    <option value=\"tbsp\">tablespoon</option>\r\n                    <option value=\"teaspoon\">teaspoon</option>\r\n                </select>`;\r\n\r\n            // Protein (float input)\r\n            var cell4 = newRow.insertCell(3);\r\n            cell4.innerHTML = '<input type=\"number\" name=\"protein[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\">';\r\n\r\n            // Carb (float input)\r\n            var cell5 = newRow.insertCell(4);\r\n            cell5.innerHTML = '<input type=\"number\" name=\"carb[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\">';\r\n\r\n            // Fibre (float input)\r\n            var cell6 = newRow.insertCell(5);\r\n            cell6.innerHTML = '<input type=\"number\" name=\"fibre[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\">';\r\n\r\n            // Fat (float input)\r\n            var cell7 = newRow.insertCell(6);\r\n            cell7.innerHTML = '<input type=\"number\" name=\"fat[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\">';\r\n\r\n            // NetCarbs (float input)\r\n            var cell8 = newRow.insertCell(7);\r\n            cell8.innerHTML = '<input type=\"number\" name=\"netcarbs[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\">';\r\n        }\r\n    </script></head><body><div class=\"max-w-2xl mx-auto p-8 bg-white shadow-md rounded-lg mt-10\"><h2 class=\"text-2xl font-bold text-gray-800 mb-6\">Blood Sugar and Insulin Tracker</h2><form action=\"#\" method=\"POST\" class=\"space-y-6\"><!-- Date-Time Input --><div><label for=\"date-time\" class=\"block text-sm font-semibold text-gray-700\">Date and Time</label> <input type=\"datetime-local\" value=\"")
+		templ_7745c5c3_Err = templ.JSONScript("food-data", view.Foods).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\r\n       // foodData = [{\"FoodID\":1,\"Food\":\"tim bar\",\"Portion\":1,\"Unit\":\"bar\",\"Protein\":6,\"Carb\":22,\"Fibre\":4,\"Fat\":15}]\r\n        const foodData = JSON.parse(document.getElementById('food-data').textContent);\r\n   </script></head><body class=\"flex flex-1\"><div class=\"flex-col mx-auto p-8 rounded-lg mt-10\"><h2 class=\"text-2xl font-bold text-gray-800 mb-6\">Blood Sugar and Insulin Tracker</h2><form action=\"#\" method=\"POST\" class=\"space-y-6\"><!-- Date-Time Input --><div><label for=\"date-time\" class=\"block text-sm font-semibold text-gray-700\">Date and Time</label> <input type=\"datetime-local\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(view.Time.Format(HTML_TIME_FMT))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 73, Col: 84}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 31, Col: 84}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -65,7 +69,7 @@ func EntryPage(view *EntryView) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.BGLIncrement))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 83, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 41, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -78,7 +82,7 @@ func EntryPage(view *EntryView) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.BGL))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 84, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 42, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -91,7 +95,7 @@ func EntryPage(view *EntryView) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.ITCRIncrement))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 95, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 53, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -104,7 +108,7 @@ func EntryPage(view *EntryView) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.ITCR))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 96, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 54, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -117,7 +121,7 @@ func EntryPage(view *EntryView) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.AITIncrement))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 107, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 65, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -130,7 +134,7 @@ func EntryPage(view *EntryView) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.AIT))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 108, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 66, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -143,7 +147,7 @@ func EntryPage(view *EntryView) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.RIAIncrement))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 119, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 77, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -156,39 +160,13 @@ func EntryPage(view *EntryView) templ.Component {
 		var templ_7745c5c3_Var10 string
 		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.RIA))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 120, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 78, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required></div><!-- Food Dropdown --><div><label class=\"block text-sm font-semibold text-gray-700\">Food Information</label><table id=\"food-table\" class=\"table-auto w-full mt-2\"><thead><tr><th class=\"px-4 py-2 text-sm font-medium text-gray-700\">Food</th><th class=\"px-4 py-2 text-sm font-medium text-gray-700\">Portion</th><th class=\"px-4 py-2 text-sm font-medium text-gray-700\">Unit</th><th class=\"px-4 py-2 text-sm font-medium text-gray-700\">Protein</th><th class=\"px-4 py-2 text-sm font-medium text-gray-700\">Carb</th><th class=\"px-4 py-2 text-sm font-medium text-gray-700\">Fibre</th><th class=\"px-4 py-2 text-sm font-medium text-gray-700\">Fat</th><th class=\"px-4 py-2 text-sm font-medium text-gray-700\">NetCarbs</th></tr></thead> <tbody><tr><td><input type=\"text\" name=\"food[]\" class=\"p-2 w-full border border-gray-300 rounded-md\"></td><td><input type=\"number\" name=\"portion[]\" class=\"p-2 w-full border border-gray-300 rounded-md\" min=\"1\"></td><td><select name=\"unit[]\" class=\"p-2 w-full border border-gray-300 rounded-md\"><option value=\"g\">grams</option> <option value=\"ml\">milliliters</option> <option value=\"cup\">cup</option> <option value=\"oz\">ounce</option> <option value=\"tbsp\">tablespoon</option> <option value=\"teaspoon\">teaspoon</option></select></td><td><input type=\"number\" name=\"protein[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\"></td><td><input type=\"number\" name=\"carb[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\"></td><td><input type=\"number\" name=\"fibre[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\"></td><td><input type=\"number\" name=\"fat[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\"></td><td><input type=\"number\" name=\"netcarbs[]\" step=\"0.1\" class=\"p-2 w-full border border-gray-300 rounded-md\"></td></tr></tbody></table><button type=\"button\" onclick=\"addRow()\" class=\"mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500\">Add Row</button></div><!-- Portion Size --><div><label for=\"portion\" class=\"block text-sm font-semibold text-gray-700\">Portion Size (g)</label> <input type=\"number\" id=\"portion\" name=\"portion\" step=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var11 string
-		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.PortionIncrement))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 172, Col: 54}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" value=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var12 string
-		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(FmtFloat(view.Portion))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/pages/entry.templ`, Line: 173, Col: 46}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required></div><!-- Submit Button --><div class=\"flex justify-end\"><button type=\"submit\" class=\"px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500\">Submit</button></div></form></div></body>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" class=\"mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500\" required></div><!-- Food Dropdown --><div class=\"w-full flex-col\"><div class=\"flex flex-row items-center\"><label class=\"mx-2\">Food Information</label> <label class=\"mx-auto  items-center\" id=\"total-carbs\">Total Net Carbs: 22</label> <button class=\"mx-2 border-c-black\" type=\"button\" onclick=\"addRow()\">Add Row</button></div><table id=\"food-table\" class=\"table-auto max-w-full mt-2\"><thead><tr><th class=\"py-2 text-sm\">Food</th><th class=\"py-2 text-sm\">Unit</th><th class=\"py-2 text-sm\">Amt</th><th class=\"py-2 text-sm max-sm:hidden\">P</th><th class=\"py-2 text-sm max-sm:hidden\">C</th><th class=\"py-2 text-sm max-sm:hidden\">Fbr</th><th class=\"py-2 text-sm max-sm:hidden\">Fat</th><th class=\"py-2 text-sm\">NC</th><th class=\"py-2 text-sm\">X</th></tr></thead> <tbody></tbody></table></div><!-- Submit Button --><div class=\"flex justify-end\"><button type=\"submit\" class=\"px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500\">Submit</button></div></form></div><script>\r\n\r\n        var RowID = 0;\r\n        const foodTable = document.getElementById('food-table');\r\n        const totalCarbLabel = document.getElementById(\"total-carbs\");\r\n        // this is creating a key/value pair dictionary to store UI state\r\n        const state = {\r\n            rows: {}\r\n        };\r\n\r\n        function calculateInsulin( ){\r\n        } \r\n        function getNetCarbs(){\r\n\r\n            // const numberInputs = foodTable.querySelectorAll('[data-id=\"net-carbs-input\"]');\r\n            const numberInputs = Object.entries(state.rows).map((r) => r[1][7]);\r\n\r\n            if(!numberInputs){return 0;}\r\n            const totalNetCarbs = numberInputs\r\n                .map(input => parseFloat(input.value) || 0)\r\n                .reduce((sum, value) => sum + value, 0);\r\n\r\n            return totalNetCarbs;\r\n        }\r\n        function updateTotalNetCarbs() {\r\n\r\n            const totalNetCarbs = getNetCarbs();\r\n            totalCarbLabel.textContent = `Total Carbs: ${totalNetCarbs}`\r\n        }\r\n\r\n        function addRow() {\r\n\r\n            const rowID = RowID++;\r\n            const rows = new Array(9);\r\n            state.rows[rowID] = rows;\r\n\r\n            const foodSelect = raw.select(\r\n                \"w-full\",\r\n                () => foodData.map((f) => raw.option({ value: f.FoodID }, new Text(f.Food)))\r\n            )\r\n            rows[0] = foodSelect;\r\n\r\n            const unitSelect = raw.select(\r\n                \"w-full min-w-max\",\r\n                () => [\r\n                    { i: \"g\", t: \"gram\" },\r\n                    { i: \"cup\", t: \"cup\" },\r\n                    { i: \"ounce\", t: \"ounce\" },\r\n                ].map((u) => raw.option({ value: u.i }, new Text(u.t)))\r\n            );\r\n            rows[1] = unitSelect;\r\n\r\n            const portionInput = raw.input(\r\n                \"w-full\",\r\n                {\r\n                    type: \"number\",\r\n                    min: \"1\",\r\n                    value: \"1\"\r\n                },\r\n            )\r\n            rows[2] = portionInput;\r\n\r\n            const proteinInput = raw.input(\r\n                \"w-full\",\r\n                {\r\n                    type: \"number\",\r\n                    step: \"0.1\",\r\n                }\r\n            );\r\n            rows[3] = raw.td( \"max-sm:hidden\", proteinInput);\r\n\r\n            const carbInput = raw.input(\r\n                \"w-full\",\r\n                {\r\n                    type: \"number\",\r\n                    step: \"0.1\",\r\n                }\r\n            );\r\n            rows[4] = raw.td( \"max-sm:hidden\", carbInput);\r\n\r\n            const fibreInput = raw.input(\r\n                \"w-full\",\r\n                {\r\n                    type: \"number\",\r\n                    step: \"0.1\",\r\n                }\r\n            );\r\n            rows[5] = raw.td( \"max-sm:hidden\", fibreInput);\r\n\r\n            const fatInput = raw.input(\r\n                \"w-full\",\r\n                {\r\n                    type: \"number\",\r\n                    step: \"0.1\",\r\n                }\r\n            );\r\n            rows[6] = raw.td( \"max-sm:hidden\", fatInput);\r\n\r\n            const netCarbsInput = raw.input(\r\n                \"w-full\",\r\n                {\r\n                    type: \"number\",\r\n                    step: \"0.1\",\r\n                    \"data\": {id:\"net-carbs-input\"},\r\n                }\r\n            );\r\n            rows[7] = netCarbsInput;\r\n\r\n            const row = foodTable.insertRow();\r\n            rows[8] = raw.button(\r\n                    \"w-full bg-c-red px-2\",\r\n                    new Text(\"X\"),\r\n                    raw.on(\"click\", () => {\r\n                        delete state.rows[rowID];\r\n                        row.remove();\r\n                        updateTotalNetCarbs();\r\n                        })\r\n            );\r\n\r\n            for(var i = 0; i < rows.length; i++){\r\n                row.insertCell(i).append(rows[i]);\r\n            }\r\n\r\n            const updateRowData = () => {\r\n                const selectedFood = foodData.find(food => food.FoodID == foodSelect.value);\r\n                if (selectedFood) {\r\n                    const portionFactor = portionInput.value / selectedFood.Portion;\r\n                    proteinInput.value = (selectedFood.Protein * portionFactor).toFixed(1);\r\n                    carbInput.value = (selectedFood.Carb * portionFactor).toFixed(1);\r\n                    fibreInput.value = (selectedFood.Fibre * portionFactor).toFixed(1);\r\n                    fatInput.value = (selectedFood.Fat * portionFactor).toFixed(1);\r\n                    netCarbsInput.value = ((selectedFood.Carb - selectedFood.Fibre) * portionFactor).toFixed(1);\r\n                    updateTotalNetCarbs();\r\n                }\r\n            };\r\n\r\n            foodSelect.addEventListener('change', updateRowData);\r\n            portionInput.addEventListener('input', updateRowData);\r\n            netCarbsInput.addEventListener('input', updateTotalNetCarbs)\r\n\r\n            updateRowData();\r\n        }\r\n\r\n        addRow();\r\n\r\n    </script></body>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

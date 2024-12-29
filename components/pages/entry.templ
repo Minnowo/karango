@@ -11,59 +11,17 @@ templ EntryPage(view *EntryView) {
         @components.HeadMetaData()
         @components.IncludeMainCSS()
 
+  @templ.JSONScript("food-data", view.Foods)
    <script>
-        // Function to add a new row to the table
-        function addRow() {
-            var table = document.getElementById('food-table');
-            var newRow = table.insertRow();
-            
-            // Food (text input)
-            var cell1 = newRow.insertCell(0);
-            cell1.innerHTML = '<input type="text" name="food[]" class="p-2 w-full border border-gray-300 rounded-md">';
-
-            // Portion (numeric input)
-            var cell2 = newRow.insertCell(1);
-            cell2.innerHTML = '<input type="number" name="portion[]" class="p-2 w-full border border-gray-300 rounded-md" min="1">';
-
-            // Unit (dropdown)
-            var cell3 = newRow.insertCell(2);
-            cell3.innerHTML = `
-                <select name="unit[]" class="p-2 w-full border border-gray-300 rounded-md">
-                    <option value="g">grams</option>
-                    <option value="ml">milliliters</option>
-                    <option value="cup">cup</option>
-                    <option value="oz">ounce</option>
-                    <option value="tbsp">tablespoon</option>
-                    <option value="teaspoon">teaspoon</option>
-                </select>`;
-
-            // Protein (float input)
-            var cell4 = newRow.insertCell(3);
-            cell4.innerHTML = '<input type="number" name="protein[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
-
-            // Carb (float input)
-            var cell5 = newRow.insertCell(4);
-            cell5.innerHTML = '<input type="number" name="carb[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
-
-            // Fibre (float input)
-            var cell6 = newRow.insertCell(5);
-            cell6.innerHTML = '<input type="number" name="fibre[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
-
-            // Fat (float input)
-            var cell7 = newRow.insertCell(6);
-            cell7.innerHTML = '<input type="number" name="fat[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
-
-            // NetCarbs (float input)
-            var cell8 = newRow.insertCell(7);
-            cell8.innerHTML = '<input type="number" name="netcarbs[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md">';
-        }
-    </script>
+       // foodData = [{"FoodID":1,"Food":"tim bar","Portion":1,"Unit":"bar","Protein":6,"Carb":22,"Fibre":4,"Fat":15}]
+        const foodData = JSON.parse(document.getElementById('food-data').textContent);
+   </script>
 
     </head>
 
-    <body >
+    <body class="flex flex-1">
 
-  <div class="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-lg mt-10">
+    <div class="flex-col mx-auto p-8 rounded-lg mt-10">
         <h2 class="text-2xl font-bold text-gray-800 mb-6">Blood Sugar and Insulin Tracker</h2>
         
         <form action="#" method="POST" class="space-y-6">
@@ -122,56 +80,30 @@ templ EntryPage(view *EntryView) {
             </div>
 
             <!-- Food Dropdown -->
-            <div>
-                <label class="block text-sm font-semibold text-gray-700">Food Information</label>
-                <table id="food-table" class="table-auto w-full mt-2">
+            <div class="w-full flex-col">
+
+                <div class="flex flex-row items-center">
+                    <label class="mx-2">Food Information</label>
+                    <label class="mx-auto  items-center" id="total-carbs">Total Net Carbs: 22</label>
+                    <button class="mx-2 border-c-black" type="button" onclick="addRow()">Add Row</button>
+                </div>
+                <table id="food-table" class="table-auto max-w-full mt-2">
                     <thead>
                         <tr>
-                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Food</th>
-                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Portion</th>
-                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Unit</th>
-                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Protein</th>
-                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Carb</th>
-                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Fibre</th>
-                            <th class="px-4 py-2 text-sm font-medium text-gray-700">Fat</th>
-                            <th class="px-4 py-2 text-sm font-medium text-gray-700">NetCarbs</th>
+                            <th class="py-2 text-sm">Food</th>
+                            <th class="py-2 text-sm">Unit</th>
+                            <th class="py-2 text-sm">Amt</th>
+                            <th class="py-2 text-sm max-sm:hidden">P</th>
+                            <th class="py-2 text-sm max-sm:hidden">C</th>
+                            <th class="py-2 text-sm max-sm:hidden">Fbr</th>
+                            <th class="py-2 text-sm max-sm:hidden">Fat</th>
+                            <th class="py-2 text-sm">NC</th>
+                            <th class="py-2 text-sm">X</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="text" name="food[]" class="p-2 w-full border border-gray-300 rounded-md"></td>
-                            <td><input type="number" name="portion[]" class="p-2 w-full border border-gray-300 rounded-md" min="1"></td>
-                            <td>
-                                <select name="unit[]" class="p-2 w-full border border-gray-300 rounded-md">
-                                    <option value="g">grams</option>
-                                    <option value="ml">milliliters</option>
-                                    <option value="cup">cup</option>
-                                    <option value="oz">ounce</option>
-                                    <option value="tbsp">tablespoon</option>
-                                    <option value="teaspoon">teaspoon</option>
-                                </select>
-                            </td>
-                            <td><input type="number" name="protein[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
-                            <td><input type="number" name="carb[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
-                            <td><input type="number" name="fibre[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
-                            <td><input type="number" name="fat[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
-                            <td><input type="number" name="netcarbs[]" step="0.1" class="p-2 w-full border border-gray-300 rounded-md"></td>
-                        </tr>
                     </tbody>
                 </table>
-                <button type="button" onclick="addRow()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Add Row</button>
-            </div>
-
-            <!-- Portion Size -->
-            <div>
-                <label for="portion" class="block text-sm font-semibold text-gray-700">Portion Size (g)</label>
-                <input 
-                type="number" 
-                id="portion" 
-                name="portion" 
-                step={ FmtFloat(view.PortionIncrement) } 
-                value={ FmtFloat(view.Portion) } 
-                class="mt-2 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
             </div>
 
             <!-- Submit Button -->
@@ -180,6 +112,153 @@ templ EntryPage(view *EntryView) {
             </div>
         </form>
     </div>
+
+    <script>
+
+        var RowID = 0;
+        const foodTable = document.getElementById('food-table');
+        const totalCarbLabel = document.getElementById("total-carbs");
+        // this is creating a key/value pair dictionary to store UI state
+        const state = {
+            rows: {}
+        };
+
+        function getNetCarbs(){
+
+            const numberInputs = Object.entries(state.rows).map((r) => r[1][7]);
+
+            if (!numberInputs) {
+                return 0;
+            }
+
+            const totalNetCarbs = numberInputs
+                .map(input => parseFloat(input.value) || 0)
+                .reduce((sum, value) => sum + value, 0);
+
+            return totalNetCarbs;
+        }
+        function updateTotalNetCarbs() {
+
+            const totalNetCarbs = getNetCarbs();
+            totalCarbLabel.textContent = `Total Carbs: ${totalNetCarbs}`
+        }
+
+        function addRow() {
+
+            const rowID = RowID++;
+            const rows = new Array(9);
+            state.rows[rowID] = rows;
+
+            const foodSelect = raw.select(
+                "w-full",
+                () => foodData.map((f) => raw.option({ value: f.FoodID }, new Text(f.Food)))
+            )
+            rows[0] = foodSelect;
+
+            const unitSelect = raw.select(
+                "w-full min-w-max",
+                () => [
+                    { i: "g", t: "gram" },
+                    { i: "cup", t: "cup" },
+                    { i: "ounce", t: "ounce" },
+                ].map((u) => raw.option({ value: u.i }, new Text(u.t)))
+            );
+            rows[1] = unitSelect;
+
+            const portionInput = raw.input(
+                "w-full",
+                {
+                    type: "number",
+                    min: "1",
+                    value: "1"
+                },
+            )
+            rows[2] = portionInput;
+
+            const proteinInput = raw.input(
+                "w-full",
+                {
+                    type: "number",
+                    step: "0.1",
+                }
+            );
+            rows[3] = raw.td( "max-sm:hidden", proteinInput);
+
+            const carbInput = raw.input(
+                "w-full",
+                {
+                    type: "number",
+                    step: "0.1",
+                }
+            );
+            rows[4] = raw.td( "max-sm:hidden", carbInput);
+
+            const fibreInput = raw.input(
+                "w-full",
+                {
+                    type: "number",
+                    step: "0.1",
+                }
+            );
+            rows[5] = raw.td( "max-sm:hidden", fibreInput);
+
+            const fatInput = raw.input(
+                "w-full",
+                {
+                    type: "number",
+                    step: "0.1",
+                }
+            );
+            rows[6] = raw.td( "max-sm:hidden", fatInput);
+
+            const netCarbsInput = raw.input(
+                "w-full",
+                {
+                    type: "number",
+                    step: "0.1",
+                    "data": {id:"net-carbs-input"},
+                }
+            );
+            rows[7] = netCarbsInput;
+
+            const row = foodTable.insertRow();
+            rows[8] = raw.button(
+                    "w-full bg-c-red px-2",
+                    new Text("X"),
+                    raw.on("click", () => {
+                        delete state.rows[rowID];
+                        row.remove();
+                        updateTotalNetCarbs();
+                        })
+            );
+
+            for(var i = 0; i < rows.length; i++){
+                row.insertCell(i).append(rows[i]);
+            }
+
+            const updateRowData = () => {
+                const selectedFood = foodData.find(food => food.FoodID == foodSelect.value);
+                if (selectedFood) {
+                    const portionFactor = portionInput.value / selectedFood.Portion;
+                    proteinInput.value = (selectedFood.Protein * portionFactor).toFixed(1);
+                    carbInput.value = (selectedFood.Carb * portionFactor).toFixed(1);
+                    fibreInput.value = (selectedFood.Fibre * portionFactor).toFixed(1);
+                    fatInput.value = (selectedFood.Fat * portionFactor).toFixed(1);
+                    netCarbsInput.value = ((selectedFood.Carb - selectedFood.Fibre) * portionFactor).toFixed(1);
+                    updateTotalNetCarbs();
+                }
+            };
+
+            foodSelect.addEventListener('change', updateRowData);
+            portionInput.addEventListener('input', updateRowData);
+            netCarbsInput.addEventListener('input', updateTotalNetCarbs)
+
+            updateRowData();
+        }
+
+        addRow();
+
+    </script>
 
     </body>
 

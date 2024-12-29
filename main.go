@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"karango/assets"
-	"karango/components/pages"
 	"karango/database"
+	"karango/handler"
 	"karango/logging"
 
 	"github.com/gorilla/mux"
@@ -21,31 +21,37 @@ const (
 	DBVENDOR  = "DATABASE_VENDOR"
 )
 
-func DBConnect() {
+func DBConnect() database.DB {
 
 	conn := os.Getenv(DBCON_ENV)
 	vendor := database.DBTypeFromStr(os.Getenv(DBVENDOR))
 
-	log.Info().
+	log.Debug().
 		Int("vendor", int(vendor)).
 		Str("str", conn).
 		Msg("Got databse connection string from env")
 
+	ctx := log.Logger.WithContext(context.Background())
+
 	db, err := database.Connect(
-		context.Background(),
+		ctx,
 		vendor,
 		conn,
 	)
 
 	if err != nil {
-
-		log.Error().Err(err).Msg("Cannot get database connection")
-		return
+		log.Fatal().Err(err).Msg("Cannot get database connection")
+		return nil
 	}
 
-	db.Migrate(context.Background())
+	err = db.Migrate(ctx)
 
-	err = database.CreateDefaultData(db)
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not migrate")
+		return nil
+	}
+
+	err = database.CreateDefaultData(ctx, db)
 
 	if err != nil {
 		if err != database.ErrDefaultDataCreate {
@@ -54,6 +60,18 @@ func DBConnect() {
 			log.Info().Msg("Default data already exists")
 		}
 	}
+
+	foods, err := db.GetAllFoods(ctx)
+
+	if err != nil {
+		log.Error().Err(err).Msg("error selecting all foods")
+	} else {
+		for _, f := range foods {
+			log.Debug().Str("food", f.Food).Msg("got food")
+		}
+	}
+
+	return db
 }
 
 func main() {
@@ -67,69 +85,13 @@ func main() {
 		return
 	}
 
-	DBConnect()
+	conn := DBConnect()
+
+	mainHandler := handler.NewMainRouteHandler(conn, log.Logger)
 
 	r := mux.NewRouter()
-
-	r.HandleFunc("/entry", func(w http.ResponseWriter, r *http.Request) {
-
-		pages.EntryPage(&pages.EntryView{
-			Time:             time.Now(),
-			BGL:              20,
-			ITCR:             1,
-			AIT:              1,
-			RIA:              1,
-			Portion:          23,
-			BGLIncrement:     0.1,
-			ITCRIncrement:    0.5,
-			AITIncrement:     0.5,
-			RIAIncrement:     0,
-			PortionIncrement: 1,
-		}).Render(r.Context(), w)
-	})
-
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-
-		pages.Home(&pages.HomeView{
-			Days: []pages.Day{
-				pages.Day{
-					Day: "today",
-					Events: []pages.Event{
-						pages.Event{
-							Event:             "lunch",
-							Time:              time.Now(),
-							BG:                5.3,
-							ITCR:              5.0,
-							ActualTaken:       7.56,
-							RecommendedAmount: 7.43,
-							ISF:               3,
-							BGT:               6.5,
-							Foods: []pages.Food{
-								pages.Food{
-									Name:    "apple",
-									Unit:    "grams",
-									Portion: 1,
-									Carbs:   10,
-									Protein: 10,
-									Fat:     10,
-									Fibre:   1,
-								},
-								pages.Food{
-									Name:    "pear",
-									Unit:    "grams",
-									Portion: 1,
-									Carbs:   10,
-									Protein: 10,
-									Fat:     10,
-									Fibre:   1,
-								},
-							},
-						},
-					},
-				},
-			},
-		}).Render(r.Context(), w)
-	})
+	r.HandleFunc("/entry", mainHandler.HandleEntry)
+	r.HandleFunc("/", mainHandler.HandleRoot)
 
 	assets.Register(r)
 

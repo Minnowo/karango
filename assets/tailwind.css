@@ -9,8 +9,9 @@
     }
 
     html {
-        color: theme('colors.c.gray') ;
-        background-color: theme('colors.c.d-black');
+        @apply
+        bg-c-white text-c-black placeholder-c-d-gray border-c-d-gray 
+        dark:bg-c-black dark:text-c-white dark:placeholder-c-d-gray dark:border-c-d-gray 
     }
 
     a {
@@ -21,6 +22,19 @@
 
     a:hover {
         color: theme('colors.c.yellow');
+    }
+
+    input,
+    button,
+    select {
+        @apply
+        bg-c-white text-c-black placeholder-c-d-gray border-c-d-gray 
+        focus:border-c-orange 
+
+        dark:bg-c-black dark:text-c-white dark:placeholder-c-d-gray dark:border-c-d-gray 
+        dark:focus:border-c-orange
+
+        outline-none rounded-sm border px-0.5 py-1
     }
 }
 
